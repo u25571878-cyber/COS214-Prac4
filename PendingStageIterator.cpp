@@ -1,33 +1,55 @@
 #include "PendingStageIterator.h"
-#include <stdexcept>
-#include <iostream>
+#include "TrackDecorator.h"
+#include "Track.h"
 
-PendingStageIterator::PendingStageIterator(WorkComponent* root, Stage target)
-    : index_(0) {
-    if (root != nullptr) {
-        gather(root, target);
+// Recursively collect only Tracks (or decorated Tracks) whose current state matches
+void PendingStageIterator::collectMatching(WorkComponent* node) {
+    if (!node) return;
+
+    // Unwrap decorators to reach the real Track if present
+    WorkComponent* current = node;
+    while (true) {
+        TrackDecorator* dec = dynamic_cast<TrackDecorator*>(current);
+        if (dec) {
+            current = dec->getWrapped();
+        } else {
+            break;
+        }
+    }
+
+    Track* track = dynamic_cast<Track*>(current);
+    if (track) {
+        if (track->getStateName() == targetState) {
+            matching.push_back(node);  // keep the (possibly decorated) object
+        }
+    }
+
+    // Continue into children
+    size_t n = node->getChildCount();
+    for (size_t i = 0; i < n; ++i) {
+        collectMatching(node->getChild(i));
     }
 }
 
-void PendingStageIterator::gather(WorkComponent* node, Stage target) {
-    
-    if (node->matchesStage(target)) {
-        matches_.push_back(node);
-    }
-    for (WorkComponent* child : node->getChildren()) {
-        gather(child, target);
+PendingStageIterator::PendingStageIterator(WorkComponent* root, const std::string& targetStateName) : currentIndex(0), targetState(targetStateName) {
+    collectMatching(root);
+}
+
+void PendingStageIterator::first() {
+    currentIndex = 0;
+}
+
+void PendingStageIterator::next() {
+    if (!isDone()) {
+        ++currentIndex;
     }
 }
 
-bool PendingStageIterator::hasNext() const {
-    return index_ < matches_.size();
+bool PendingStageIterator::isDone() const {
+    return currentIndex >= matching.size();
 }
 
-WorkComponent* PendingStageIterator::next() {
-    if (!hasNext()) {
-        std::cerr << "PendingStageIterator::next() called with nothing left "
-                     "— check hasNext() first.\n";
-        return nullptr;
-    }
-    return matches_[index_++];
+WorkComponent* PendingStageIterator::currentItem() const {
+    if (isDone()) return nullptr;
+    return matching[currentIndex];
 }

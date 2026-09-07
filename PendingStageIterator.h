@@ -1,25 +1,32 @@
 #ifndef PENDINGSTAGEITERATOR_H
 #define PENDINGSTAGEITERATOR_H
 
-#include <vector>
-#include <cstddef>
 #include "Iterator.h"
 #include "WorkComponent.h"
+#include "Track.h"
 #include "Stage.h"
 
-//Concrete Iterator
+#include <vector>
+#include <string>
+
+using namespace std;
+// Selective iterator: only visits Tracks that are currently in a given lifecycle state.
 class PendingStageIterator : public Iterator {
-public:
-    PendingStageIterator(WorkComponent* root, Stage target);
-
-    bool hasNext() const override;
-    WorkComponent* next() override;
-
 private:
-    void gather(WorkComponent* node, Stage target);
+    vector<WorkComponent*> matching;
+    size_t currentIndex;
+    string targetState;
 
-    std::vector<WorkComponent*> matches_;
-    std::size_t index_;
+    void collectMatching(WorkComponent* node);
+
+public:
+    PendingStageIterator(WorkComponent* root, const string& targetStateName);
+    virtual ~PendingStageIterator() {}
+
+    void first() override;
+    void next() override;
+    bool isDone() const override;
+    WorkComponent* currentItem() const override;
 };
 
 #endif

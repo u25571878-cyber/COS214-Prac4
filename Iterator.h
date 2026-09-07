@@ -1,14 +1,17 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
-class WorkComponent; //forward declaration
+#include "WorkComponent.h"
 
-//Iterator (GoF)
+// Abstract Iterator (Iterator pattern)
 class Iterator {
 public:
-    virtual ~Iterator() = default;
-    virtual bool hasNext() const = 0;
-    virtual WorkComponent* next() = 0; // caller must check hasNext() first
+    virtual ~Iterator() {}
+
+    virtual void first() = 0;
+    virtual void next() = 0;
+    virtual bool isDone() const = 0;
+    virtual WorkComponent* currentItem() const = 0;
 };
 
 #endif
