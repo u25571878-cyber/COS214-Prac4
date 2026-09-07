@@ -2,6 +2,7 @@
 #define ARTISTPROJECT_H
 
 #include "WorkComponent.h"
+#include "FullCatalogIterator.h"
 #include <string>
 #include <vector>
 
@@ -47,7 +48,7 @@ public:
     }
 
     Iterator* createIterator() override {
-        return nullptr; // Person C wires this up
+        return new FullCatalogIterator(this);
     }
 
     ~ArtistProject() override {

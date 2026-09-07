@@ -2,6 +2,7 @@
 #define RECORDINGSESSION_H
 
 #include "WorkComponent.h"
+#include "FullCatalogIterator.h"
 #include <string>
 #include <vector>
 
@@ -55,10 +56,8 @@ public:
         return children;
     }
 
-    // Person C will replace nullptr with `new FullCatalogIterator(this)`
-    // once the Iterator hierarchy exists.
     Iterator* createIterator() override {
-        return nullptr;
+        return new FullCatalogIterator(this);
     }
 
     ~RecordingSession() override {

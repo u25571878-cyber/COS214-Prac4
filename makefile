@@ -8,3 +8,11 @@ $(TARGET): $(SRC)
 
 clean:
 	rm -f $(TARGET)
+	clear
+	@echo "Cleaned.🌞"
+
+run: $(TARGET)
+	./$(TARGET)
+
+valgrind: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET)
