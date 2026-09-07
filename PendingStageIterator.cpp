@@ -24,11 +24,17 @@ void PendingStageIterator::collectMatching(WorkComponent* node) {
         }
     }
 
-    // Continue into children
+    // Recurse using Person A's helper
+    std::vector<WorkComponent*> children = node->getChildrenForIteration();
+    for (WorkComponent* child : children) {
+        collectMatching(child);
+    }
+
+   /* // Continue into children
     size_t n = node->getChildCount();
     for (size_t i = 0; i < n; ++i) {
         collectMatching(node->getChild(i));
-    }
+    }*/
 }
 
 PendingStageIterator::PendingStageIterator(WorkComponent* root, const std::string& targetStateName) : currentIndex(0), targetState(targetStateName) {

@@ -8,15 +8,14 @@ void FullCatalogIterator::buildSnapshot(WorkComponent* node) {
 
     snapshot.push_back(node);
 
-    // If it is a composite, continue into children
-    size_t n = node->getChildCount();
-    for (size_t i = 0; i < n; ++i) {
-        buildSnapshot(node->getChild(i));
+    // Use Person A's helper (returns a copy of the child pointers)
+    std::vector<WorkComponent*> children = node->getChildrenForIteration();
+    for (WorkComponent* child : children) {
+        buildSnapshot(child);
     }
 }
 
-FullCatalogIterator::FullCatalogIterator(WorkComponent* root)
-    : currentIndex(0) {
+FullCatalogIterator::FullCatalogIterator(WorkComponent* root) : currentIndex(0) {
     buildSnapshot(root);
 }
 
