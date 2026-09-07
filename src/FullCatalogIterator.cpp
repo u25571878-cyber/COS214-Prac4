@@ -1,6 +1,4 @@
 #include "FullCatalogIterator.h"
-#include "CompositeGroups.h"
-#include "TrackDecorator.h"
 
 // Recursive depth-first collection into the snapshot vector
 void FullCatalogIterator::buildSnapshot(WorkComponent* node) {

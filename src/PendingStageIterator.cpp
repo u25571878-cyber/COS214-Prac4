@@ -1,5 +1,4 @@
 #include "PendingStageIterator.h"
-#include "TrackDecorator.h"
 #include "Track.h"
 
 // Recursively collect only Tracks (or decorated Tracks) whose current state matches

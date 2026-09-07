@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "Stage.h"
 
 // Forward declaration - avoids circular include with Iterator.h.
 // Person C will build the full Iterator hierarchy; we only need a pointer here.
@@ -39,6 +40,11 @@ public:
     }
 
     virtual ~WorkComponent() {} // Rule 4: every polymorphic base needs a virtual destructor
+
+    // Person B's WorkComponent.h
+    virtual std::string getStageName() const { return ""; }
+    virtual bool matchesStage(Stage /*target*/) const { return false; }
+
 };
 
 #endif
