@@ -5,7 +5,19 @@
 void PendingStageIterator::collectMatching(WorkComponent* node) {
     if (!node) return;
 
-    // Unwrap decorators to reach the real Track if present
+    // Use the interface that already exists on WorkComponent / Track.
+    // No need for TrackDecorator unwrapping
+    if (node->getStageName() == targetState) {
+        matching.push_back(node);
+    }
+
+    // Recurse using Person A's helper
+    std::vector<WorkComponent*> children = node->getChildrenForIteration();
+    for (WorkComponent* child : children) {
+        collectMatching(child);
+    }
+
+    /*// Unwrap decorators to reach the real Track if present
     WorkComponent* current = node;
     while (true) {
         TrackDecorator* dec = dynamic_cast<TrackDecorator*>(current);
@@ -23,13 +35,7 @@ void PendingStageIterator::collectMatching(WorkComponent* node) {
         }
     }
 
-    // Recurse using Person A's helper
-    std::vector<WorkComponent*> children = node->getChildrenForIteration();
-    for (WorkComponent* child : children) {
-        collectMatching(child);
-    }
-
-   /* // Continue into children
+    // Continue into children
     size_t n = node->getChildCount();
     for (size_t i = 0; i < n; ++i) {
         collectMatching(node->getChild(i));

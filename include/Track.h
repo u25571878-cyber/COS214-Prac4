@@ -1,8 +1,11 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include "WorkComponent.h"
 #include <string>
+#include "WorkComponent.h"
+#include "TrackState.h"
+
+// Leaf (Composite) / Context (State)
 
 /**
  * Track - GoF "Leaf" role in the Composite pattern.
@@ -16,23 +19,35 @@
  */
 class Track : public WorkComponent {
 private:
-    std::string name;
-    // TrackState* currentState;  <-- Person B adds this
+    std::string title_;
+    double baseCost_;
+    double baseHours_;
+    TrackState* currentState_; // owned
 
 public:
-    Track(const std::string& trackName) : name(trackName) {}
+    Track(const std::string& title) : title_(title), baseCost_(0), baseHours_(0), currentState_(new DemoState()) {}
+    Track(const std::string& title, double baseCost, double baseHours);
+    ~Track() override; // must delete currentState_ (Rule 4 & 5)
 
-    std::string getName() const override { return name; }
+    std::string getName() const override;
+    double getTotalCost() const override;       //currentState_->getCost(*this)
+    double getTotalDuration() const override;    //currentState_->getEstimatedCompletionTime(*this)
+    std::string getStageName() const override;
 
-    // STUBS - Person B replaces these with state-delegated behaviour.
-    double getTotalDuration() const override { return 0.0; }
-    double getTotalCost() const override { return 0.0; }
+    
+    double getBaseCost() const { return baseCost_; }
+    double getBaseHours() const { return baseHours_; }
+
+    bool advance();
+    bool attemptTransitionTo(Stage target);
+
+    Stage getStage() const { return currentState_->getStage(); }
+    bool matchesStage(Stage target) const override { return getStage() == target; }
+
 
     // Track has no children, so it uses WorkComponent's default
     // getChildrenForIteration() (returns empty) and createIterator()
     // (returns nullptr) without needing to override either.
-
-    ~Track() override {}
 };
 
 #endif
