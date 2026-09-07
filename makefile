@@ -1,0 +1,10 @@
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Iinclude
+TARGET = taskforge
+SRC = $(wildcard src/*.cpp)
+
+$(TARGET): $(SRC)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
+
+clean:
+	rm -f $(TARGET)
