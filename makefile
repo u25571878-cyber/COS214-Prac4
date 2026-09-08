@@ -15,4 +15,9 @@ run: $(TARGET)
 	./$(TARGET)
 
 valgrind: $(TARGET)
+	clear
 	valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET)
+
+gdb: $(TARGET) 
+	clear
+	gdb ./$(TARGET)
