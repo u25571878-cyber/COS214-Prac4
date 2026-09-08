@@ -6,6 +6,7 @@
 #include "FullCatalogIterator.h"
 #include "PendingStageIterator.h"
 #include "Stage.h"
+#include "TrackDecorator.h"
 
 #include <iostream>
 using namespace std;
@@ -43,10 +44,15 @@ int main() {
     Track* t3 = new Track("Silent Orbit",    900.0,  8.0);
     Track* t4 = new Track("Solar Flare",    1400.0, 11.0);
 
+    //added missing decorator
+    WorkComponent* t4Decorated =
+        new RushOrderDecorator(
+            new ExplicitContentDecorator(t4));
+
     session1->addChild(t1);
     session1->addChild(t2);
     session2->addChild(t3);
-    session2->addChild(t4);
+    session2->addChild(t4Decorated);
 
     project->addChild(session1);
     project->addChild(session2);
@@ -54,6 +60,9 @@ int main() {
 
     cout << "\nHierarchy built.\n";
     cout << "Label total cost: " << label->getTotalCost() << "\n";
+    cout << "Decorated track: " << t4Decorated->getName()
+         << " | cost=" << t4Decorated->getTotalCost()
+         << " (Decorator: RushOrder + ExplicitContent stacked on Solar Flare)\n";
 
     // 2. Full catalogue traversal (Iterator)
     Iterator* fullIt = label->createIterator();   // FullCatalogIterator
