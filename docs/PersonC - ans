@@ -1,0 +1,27 @@
+3.3 Other Important Design Decisions:
+[TEAM – Any other decisions worth recording (e.g. why getChildrenForIteration returns a copy, why Snapshot policy was chosen (my ans is at 6.1), etc.)]
+
+5.1 Traversal-visible Activity Diagram
+[image]
+
+5.3 Team’s-choice Activity Diagram 
+[image]
+
+6.1 Chosen policy:
+Snapshot - Both FullCatalogIterator and PendingStageIterator capture the set of objects they will visit at the moment they are constructed. 
+- Structural changes (add / remove / move of a WorkComponent) that occur after an iterator has been created do not appear in that iterator.
+- State changes on already-captured objects are visible when the object is later queried (because we store pointers, not deep copies of state), but the membership of the iteration is fixed.
+- This matches the common use-case of generating a report or a work-queue view that must remain stable for the duration of the processing run.
+
+7.3 Final Valgrind Evidence
+Command used:
+valgrind --leak-check=full --show-leak-kinds=all ./taskforge
+
+==48885== HEAP SUMMARY:
+==48885==     in use at exit: 0 bytes in 0 blocks
+==48885==   total heap usage: 97 allocs, 97 frees, 77,121 bytes allocated
+==48885== 
+==48885== All heap blocks were freed -- no leaks are possible
+==48885== 
+==48885== For lists of detected and suppressed errors, rerun with: -s
+==48885== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
